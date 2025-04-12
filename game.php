@@ -1,75 +1,44 @@
 <?php
 session_start();
-// Bestandspad
 $bestand = "champions.txt";
-
-// Controleren of het bestand bestaat
-if (file_exists($bestand)) {
-    // Bestandsinhoud ophalen
-    $inhoud = file_get_contents($bestand);
-    $regels = file($bestand, FILE_IGNORE_NEW_LINES);
-    $aantalRegels = count($regels);
-    // When the form is submitted (POST request)
-    /*if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-        // You can modify the session variable after form submission
-         // Only set the value if it's not already set
-                echo !isset($_SESSION['randomRegel']);
-            
+$regels = file($bestand, FILE_IGNORE_NEW_LINES);
+$aantalRegels = count($regels);
+// Initialize the session value for 'randomRegel' if it's not set
+if (!isset($_SESSION['randomRegel']) || $_SESSION['randomRegel'] == "") {
+    if (file_exists($bestand)) {
+        if ($aantalRegels > 0) {
+            $randomIndex = rand(0, $aantalRegels - 1);
+            $_SESSION['randomRegel'] = strtolower(trim($regels[$randomIndex])); // Random line from file
+            $_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']); // Remove internal spaces
+        }
         
-    }*/
-    
-    // Access session variable
-    //echo $_SESSION['randomRegel']; // This should echo the value stored in the session
-
-} else {
-    $inhoud = "Het bestand bestaat niet.";
+    }
 }
-
-// This handles the POST request when the form is submitted via AJAX
+//var_dump($_SESSION['randomRegel']);
+// Handle the form submission via AJAX
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     // Get and clean user input
     $gebruikerInvoer = htmlspecialchars($_POST['tekstInput']);
     $gebruikerInvoer = mb_convert_encoding($gebruikerInvoer, 'UTF-8', 'auto');  // Convert to UTF-8
-    
-    // Remove unwanted spaces (internal or leading/trailing) from user input and session value
-    $gebruikerInvoer = strtolower(trim($gebruikerInvoer));  // Trim and lowercase the user input
-    $_SESSION['randomRegel'] = strtolower(trim($_SESSION['randomRegel']));  // Trim and lowercase session value
-    
-    // Debugging output to check the cleaned values
-    //echo "Gehuister Input (trimmed, lowercased): " . bin2hex($gebruikerInvoer) . "<br>";  // Hex representation of the input
-    //echo "Session Input (trimmed, lowercased): " . bin2hex($_SESSION['randomRegel']) . "<br>"; // Hex representation of the session value
-
-    // 11Remove internal extra spaces if there are any (spaces between words)
+    $gebruikerInvoer = strtolower(trim($gebruikerInvoer));  // Trim and lowercase
     $gebruikerInvoer = str_replace(' ', '', $gebruikerInvoer);  // Remove internal spaces
-    $_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']);  // Remove internal spaces
+    
 
-    // Debugging after internal space removal
-    //echo "Gehuister Input (no internal spaces): " . bin2hex($gebruikerInvoer) . "<br>";
-    //echo "Session Input (no internal spaces): " . bin2hex($_SESSION['randomRegel']) . "<br>";
-    $gebruikerInvoer = html_entity_decode($gebruikerInvoer, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    $_SESSION['randomRegel'] = html_entity_decode($_SESSION['randomRegel'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    if (!isset($_SESSION['randomRegel'])) {
-        if ($aantalRegels > 0) {
-            $randomIndex = rand(0, $aantalRegels - 1);
-            $_SESSION['randomRegel'] = $regels[$randomIndex]; // Only set the value if it's not already set            
-        }
-    }
+    // Debugging: Log the user input and session value to ensure the comparison is correct
+    error_log("User input: " . $gebruikerInvoer);
+    error_log("Session value: " . $_SESSION['randomRegel']);
+
     // Compare the user input with the session value
     if ($gebruikerInvoer == $_SESSION['randomRegel']) {
-        echo "correct";
-        
-        // Update the session with a new random line if necessary
-        if ($aantalRegels > 0) {
-            $randomIndex = rand(0, $aantalRegels - 1);
-            $_SESSION['randomRegel'] = $regels[$randomIndex]; // Only set the value if it's not already set
-        }
+        $randomIndex = rand(0, $aantalRegels - 1);
+            $_SESSION['randomRegel'] = strtolower(trim($regels[$randomIndex])); // Random line from file
+            $_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']); // Remove internal spaces
+        echo "correct";  // If the input matches the session value
     } else {
-        echo "nah";
+        echo "nah";  // If the input doesn't match
     }
-    
     exit;  // Prevent further processing
 }
-
 ?>
 
 <!DOCTYPE html>
@@ -117,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div class="form-container">
         <h2>Voer tekst in (zonder herladen):</h2>
-        <?php echo ($_SESSION['randomRegel'])?>
+        <p>Hint: Het antwoord is een championaam zonder spaties. <?php echo $_SESSION['randomRegel'] ?></p>
         <form id="textForm">
             <input type="text" id="tekstInput" name="tekstInput" placeholder="Type hier..." required>
             <input type="submit" value="Verzenden">
@@ -131,23 +100,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         document.getElementById("textForm").addEventListener("submit", function(e) {
             e.preventDefault(); // Voorkom dat het formulier op de traditionele manier verzonden wordt
 
+            // Maak een nieuw XMLHttpRequest-object voor de AJAX-aanroep
+            var xhr = new XMLHttpRequest();
+
             var formData = new FormData();
             formData.append("tekstInput", document.getElementById("tekstInput").value);
 
-            var xhr = new XMLHttpRequest();
+            // Open de POST-aanroep voor de huidige pagina
             xhr.open("POST", "", true); // Send to the same page
+
             xhr.onreadystatechange = function() {
                 if (xhr.readyState == 4 && xhr.status == 200) {
-                    // Update the page with the response from the server
+                    // Update de pagina met het antwoord van de server
                     document.getElementById("response").innerHTML = "Ingevoerde tekst: " + xhr.responseText;
                     document.getElementById("tekstInput").value = ""; // Clear the input after submission
-                    console.log(xhr.responseText); // Log the response to check if it's exactly "correct"
-if (xhr.responseText.trim() === "correct") {
-    window.location.reload();
-}
+                    console.log(xhr.responseText); // Log the response
+
+                    // Check the response if it is "correct"
+                    if (xhr.responseText.trim() === "correct") {
+                        window.location.reload(); // Reload the page if the answer is correct
+                    } else {
+                        console.log("Incorrect answer");
+                    }
                 }
             };
-            xhr.send(formData); // Send the data via AJAX
+
+            // Verstuur het formulier via AJAX
+            xhr.send(formData); // Send formData to the same page
+
         });
     </script>
 </body>
