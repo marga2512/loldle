@@ -9,14 +9,6 @@ if (file_exists($bestand)) {
     $inhoud = file_get_contents($bestand);
     $regels = file($bestand, FILE_IGNORE_NEW_LINES);
     $aantalRegels = count($regels);
-
-
-    if (!isset($_SESSION['randomRegel'])) {
-        if ($aantalRegels > 0) {
-            $randomIndex = rand(0, $aantalRegels - 1);
-            $_SESSION['randomRegel'] = $regels[$randomIndex]; // Only set the value if it's not already set            
-        }
-    }
     // When the form is submitted (POST request)
     /*if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         // You can modify the session variable after form submission
@@ -44,17 +36,24 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $_SESSION['randomRegel'] = strtolower(trim($_SESSION['randomRegel']));  // Trim and lowercase session value
     
     // Debugging output to check the cleaned values
-    echo "Gehuister Input (trimmed, lowercased): " . bin2hex($gebruikerInvoer) . "<br>";  // Hex representation of the input
-    echo "Session Input (trimmed, lowercased): " . bin2hex($_SESSION['randomRegel']) . "<br>"; // Hex representation of the session value
+    //echo "Gehuister Input (trimmed, lowercased): " . bin2hex($gebruikerInvoer) . "<br>";  // Hex representation of the input
+    //echo "Session Input (trimmed, lowercased): " . bin2hex($_SESSION['randomRegel']) . "<br>"; // Hex representation of the session value
 
-    // Remove internal extra spaces if there are any (spaces between words)
+    // 11Remove internal extra spaces if there are any (spaces between words)
     $gebruikerInvoer = str_replace(' ', '', $gebruikerInvoer);  // Remove internal spaces
     $_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']);  // Remove internal spaces
 
     // Debugging after internal space removal
-    echo "Gehuister Input (no internal spaces): " . bin2hex($gebruikerInvoer) . "<br>";
-    echo "Session Input (no internal spaces): " . bin2hex($_SESSION['randomRegel']) . "<br>";
-
+    //echo "Gehuister Input (no internal spaces): " . bin2hex($gebruikerInvoer) . "<br>";
+    //echo "Session Input (no internal spaces): " . bin2hex($_SESSION['randomRegel']) . "<br>";
+    $gebruikerInvoer = html_entity_decode($gebruikerInvoer, ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    $_SESSION['randomRegel'] = html_entity_decode($_SESSION['randomRegel'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
+    if (!isset($_SESSION['randomRegel'])) {
+        if ($aantalRegels > 0) {
+            $randomIndex = rand(0, $aantalRegels - 1);
+            $_SESSION['randomRegel'] = $regels[$randomIndex]; // Only set the value if it's not already set            
+        }
+    }
     // Compare the user input with the session value
     if ($gebruikerInvoer == $_SESSION['randomRegel']) {
         echo "correct";
