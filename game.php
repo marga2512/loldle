@@ -9,7 +9,7 @@ if (!isset($_SESSION['randomRegel']) || $_SESSION['randomRegel'] == "") {
         if ($aantalRegels > 0) {
             $randomIndex = rand(0, $aantalRegels - 1);
             $_SESSION['randomRegel'] = strtolower(trim($regels[$randomIndex])); // Random line from file
-            $_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']); // Remove internal spaces
+            //$_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']); // Remove internal spaces
         }
         
     }
