@@ -93,40 +93,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <div id="response"></div>
     </div>
 
-    <script>
-        // AJAX formulier verzenden
-        document.getElementById("textForm").addEventListener("submit", function(e) {
-            e.preventDefault(); // Voorkom dat het formulier op de traditionele manier verzonden wordt
-
-            // Maak een nieuw XMLHttpRequest-object voor de AJAX-aanroep
-            var xhr = new XMLHttpRequest();
-
-            var formData = new FormData();
-            formData.append("tekstInput", document.getElementById("tekstInput").value);
-
-            // Open de POST-aanroep voor de huidige pagina
-            xhr.open("POST", "", true); // Send to the same page
-
-            xhr.onreadystatechange = function() {
-                if (xhr.readyState == 4 && xhr.status == 200) {
-                    // Update de pagina met het antwoord van de server
-                    document.getElementById("response").innerHTML = "Ingevoerde tekst: " + xhr.responseText;
-                    document.getElementById("tekstInput").value = ""; // Clear the input after submission
-                    console.log(xhr.responseText); // Log the response
-
-                    // Check the response if it is "correct"
-                    if (xhr.responseText.trim() === "correct") {
-                        window.location.reload(); // Reload the page if the answer is correct
-                    } else {
-                        console.log("Incorrect answer");
-                    }
-                }
-            };
-
-            // Verstuur het formulier via AJAX
-            xhr.send(formData); // Send formData to the same page
-
-        });
-    </script>
+    <script src="script.js" defer></script>
 </body>
 </html>
