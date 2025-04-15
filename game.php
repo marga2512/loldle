@@ -1,17 +1,4 @@
-<?php
-session_start();
-$bestand = "champions.txt";
-$regels = file($bestand, FILE_IGNORE_NEW_LINES);
-
-// If randomRegel is not yet set, choose a random one (to display hint)
-if (!isset($_SESSION['randomRegel']) || $_SESSION['randomRegel'] == "") {
-    $aantalRegels = count($regels);
-    if (file_exists($bestand) && $aantalRegels > 0) {
-        $randomIndex = rand(0, $aantalRegels - 1);
-        $_SESSION['randomRegel'] = strtolower(trim($regels[$randomIndex]));
-    }
-}
-?>
+<?php include 'sessionSetup.php'; ?>
 
 <!DOCTYPE html>
 <html lang="nl">

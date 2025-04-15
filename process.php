@@ -1,5 +1,5 @@
 <?php
-session_start();
+include 'sessionSetup.php';
 
 $bestand = "champions.txt";
 $regels = file($bestand, FILE_IGNORE_NEW_LINES);
