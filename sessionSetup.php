@@ -11,4 +11,8 @@ if (!isset($_SESSION['randomRegel']) || $_SESSION['randomRegel'] == "") {
         $_SESSION['randomRegel'] = strtolower(trim($regels[$randomIndex]));
     }
 }
+
+// Set the length of the random champion name
+$_SESSION['championNameLength'] = mb_strlen(str_replace(' ', '', $_SESSION['randomRegel']), 'UTF-8');
 ?>
+

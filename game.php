@@ -45,7 +45,11 @@
 <body>
     <div class="form-container">
         <h2>Voer tekst in (zonder herladen):</h2>
-        <p>Hint: Het antwoord is een championaam zonder spaties. <?php echo $_SESSION['randomRegel'] ?></p>
+        <p>Hint: Het antwoord is een championaam zonder spaties. 
+            <?php
+                echo $_SESSION['randomRegel'] . " " . $_SESSION['championNameLength'];
+            ?>
+        </p>
         <form id="textForm">
             <input type="text" id="tekstInput" name="tekstInput" placeholder="Type hier..." required>
             <input type="submit" value="Verzenden">
