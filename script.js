@@ -1,31 +1,39 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById("textForm");
-    const input = document.getElementById("tekstInput");
-    const responseDiv = document.getElementById("response");
+document.getElementById("wordle-form").addEventListener("submit", function(e) {
+    e.preventDefault();  // Prevent form submission
 
-    form.addEventListener("submit", function (e) {
-        e.preventDefault();
+    const inputs = document.querySelectorAll('.wordle-input');
+    const guess = Array.from(inputs).map(input => input.value.toLowerCase()).join('');
+    console.log(guess.length);
+    console.log(championNameLength);
+    // Check if the guess is valid (all inputs are filled)
+    if (guess.length === championNameLength) {
+        let resultMessage = 'Incorrect guess!';
+        let resultColors = [];
 
-        const xhr = new XMLHttpRequest();
-        const formData = new FormData();
-        formData.append("tekstInput", input.value);
-
-        xhr.open("POST", "process.php", true);
-
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                const responseText = xhr.responseText.trim();
-                responseDiv.innerHTML = "Ingevoerde tekst: " + responseText;
-                input.value = "";
-
-                if (responseText === "correct") {
-                    window.location.reload();
-                } else {
-                    console.log("Incorrect answer");
-                }
+        for (let i = 0; i < championNameLength; i++) {
+            if (guess[i] === correctWord[i]) {
+                resultColors.push('green');
+                inputs[i].style.backgroundColor = 'green'; // Correct letter
+            } else if (correctWord.includes(guess[i])) {
+                resultColors.push('yellow');
+                inputs[i].style.backgroundColor = 'yellow'; // Letter is in the word, but wrong position
+            } else {
+                resultColors.push('gray');
+                inputs[i].style.backgroundColor = 'gray'; // Incorrect letter
             }
-        };
+        }
 
-        xhr.send(formData);
-    });
+        resultMessage = 'Guess Result: ' + resultColors.join(' ');
+        document.getElementById('response').innerText = resultMessage;
+
+        // Check if the guess is correct
+        if (guess === correctWord) {
+            document.getElementById('response').innerText = 'Correct! Well done!';
+            setTimeout(() => {
+                window.location.href = window.location.pathname + '?reset=1';
+            }, 1000);
+        }
+    } else {
+        document.getElementById('response').innerText = 'Please enter a ' + championNameLength + '-letter word.';
+    }
 });

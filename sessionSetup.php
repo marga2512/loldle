@@ -3,6 +3,10 @@ session_start();
 $bestand = "listOfChamps/champions.txt";
 $regels = file($bestand, FILE_IGNORE_NEW_LINES);
 $aantalRegels = count($regels);
+if (isset($_GET['reset']) && $_GET['reset'] === '1') {
+    unset($_SESSION['randomRegel']);
+    unset($_SESSION['championNameLength']);
+}
 
 // Set session champ if not yet set
 if (!isset($_SESSION['randomRegel']) || $_SESSION['randomRegel'] == "") {

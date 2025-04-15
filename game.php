@@ -40,24 +40,78 @@
             border: 1px solid #ddd;
             border-radius: 5px;
         }
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #f7f7f7;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.wordle-container {
+    text-align: center;
+}
+
+.input-row {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.wordle-input {
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    text-align: center;
+    margin: 0 5px;
+    border: 2px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+}
+
+.wordle-input:focus {
+    border-color: #007bff;
+    outline: none;
+}
+
+button {
+    padding: 10px 20px;
+    font-size: 16px;
+    margin-top: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
     </style>
 </head>
-<body>
-    <div class="form-container">
-        <h2>Voer tekst in (zonder herladen):</h2>
-        <p>Hint: Het antwoord is een championaam zonder spaties. 
-            <?php
-                echo $_SESSION['randomRegel'] . " " . $_SESSION['championNameLength'];
-            ?>
-        </p>
-        <form id="textForm">
-            <input type="text" id="tekstInput" name="tekstInput" placeholder="Type hier..." required>
-            <input type="submit" value="Verzenden">
-        </form>
+<body>        
+    <div class="wordle-container">
+    <form id="wordle-form">
+        <div class="input-row">
+        <?php 
+            for ($i = 0; $i < $_SESSION['championNameLength']; $i++) {
+                // Generate an input box for each character in the champion name
+                echo '<input type="text" maxlength="1" class="wordle-input" id="input-' . $i . '">';
+            }
+        ?>
+        </div>
+        <button type="submit">Check</button>
+    </form>
+    <div id="response"></div>
+</div>
 
-        <div id="response"></div>
-    </div>
-
-    <script src="script.js" defer></script>
+<script>
+    const correctWord = <?php echo json_encode($_SESSION['randomRegel']); ?>;
+    const championNameLength = <?php echo json_encode($_SESSION['championNameLength']); ?>;
+</script>
+<script src="script.js"></script>
 </body>
 </html>
