@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const formData = new FormData();
         formData.append("tekstInput", input.value);
 
-        xhr.open("POST", "", true);
+        xhr.open("POST", "process.php", true);
 
         xhr.onreadystatechange = function () {
             if (xhr.readyState === 4 && xhr.status === 200) {

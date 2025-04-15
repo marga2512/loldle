@@ -2,40 +2,14 @@
 session_start();
 $bestand = "champions.txt";
 $regels = file($bestand, FILE_IGNORE_NEW_LINES);
-$aantalRegels = count($regels);
-// Initialize the session value for 'randomRegel' if it's not set
-if (!isset($_SESSION['randomRegel']) || $_SESSION['randomRegel'] == "") {
-    if (file_exists($bestand)) {
-        if ($aantalRegels > 0) {
-            $randomIndex = rand(0, $aantalRegels - 1);
-            $_SESSION['randomRegel'] = strtolower(trim($regels[$randomIndex])); // Random line from file
-            //$_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']); // Remove internal spaces
-        }
-        
-    }
-}
-//var_dump($_SESSION['randomRegel']);
-// Handle the form submission via AJAX
-if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-    // Get and clean user input
-    $gebruikerInvoer = htmlspecialchars($_POST['tekstInput']);
-    $gebruikerInvoer = mb_convert_encoding($gebruikerInvoer, 'UTF-8', 'auto');  // Convert to UTF-8
-    $gebruikerInvoer = strtolower(trim($gebruikerInvoer));  // Trim and lowercase
-    $gebruikerInvoer = str_replace(' ', '', $gebruikerInvoer);  // Remove internal spaces
-    $_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']);  // Remove internal spaces
-    $gebruikerInvoer = html_entity_decode($gebruikerInvoer, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    $_SESSION['randomRegel'] = html_entity_decode($_SESSION['randomRegel'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
 
-    // Compare the user input with the session value
-    if ($gebruikerInvoer === $_SESSION['randomRegel']) {
+// If randomRegel is not yet set, choose a random one (to display hint)
+if (!isset($_SESSION['randomRegel']) || $_SESSION['randomRegel'] == "") {
+    $aantalRegels = count($regels);
+    if (file_exists($bestand) && $aantalRegels > 0) {
         $randomIndex = rand(0, $aantalRegels - 1);
-            $_SESSION['randomRegel'] = strtolower(trim($regels[$randomIndex])); // Random line from file
-            $_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']); // Remove internal spaces
-        echo "correct";  // If the input matches the session value
-    } else {
-        echo "nah";  // If the input doesn't match
+        $_SESSION['randomRegel'] = strtolower(trim($regels[$randomIndex]));
     }
-    exit;  // Prevent further processing
 }
 ?>
 
