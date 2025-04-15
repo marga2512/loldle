@@ -22,11 +22,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $gebruikerInvoer = mb_convert_encoding($gebruikerInvoer, 'UTF-8', 'auto');  // Convert to UTF-8
     $gebruikerInvoer = strtolower(trim($gebruikerInvoer));  // Trim and lowercase
     $gebruikerInvoer = str_replace(' ', '', $gebruikerInvoer);  // Remove internal spaces
+    $_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']);  // Remove internal spaces
     $gebruikerInvoer = html_entity_decode($gebruikerInvoer, ENT_QUOTES | ENT_HTML5, 'UTF-8');
     $_SESSION['randomRegel'] = html_entity_decode($_SESSION['randomRegel'], ENT_QUOTES | ENT_HTML5, 'UTF-8');
-    
+
     // Compare the user input with the session value
-    if ($gebruikerInvoer == $_SESSION['randomRegel']) {
+    if ($gebruikerInvoer === $_SESSION['randomRegel']) {
         $randomIndex = rand(0, $aantalRegels - 1);
             $_SESSION['randomRegel'] = strtolower(trim($regels[$randomIndex])); // Random line from file
             $_SESSION['randomRegel'] = str_replace(' ', '', $_SESSION['randomRegel']); // Remove internal spaces
