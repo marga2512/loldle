@@ -1,6 +1,6 @@
 <?php
 session_start();
-$bestand = "champions.txt";
+$bestand = "listOfChamps/champions.txt";
 $regels = file($bestand, FILE_IGNORE_NEW_LINES);
 $aantalRegels = count($regels);
 
